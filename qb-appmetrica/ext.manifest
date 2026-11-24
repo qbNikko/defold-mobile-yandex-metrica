@@ -1,0 +1,11 @@
+name: "MobileAppMetrica"
+
+platforms:
+    arm64-ios:
+        context:
+            flags: ["-fobjc-arc"]
+            linkFlags: ["-ObjC"]
+    arm64_sim-ios:
+        context:
+            flags: ["-fobjc-arc"]
+            linkFlags: ["-ObjC"]

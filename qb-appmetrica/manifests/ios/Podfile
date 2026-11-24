@@ -1,0 +1,4 @@
+platform :ios, '15.0'
+
+pod 'AppMetricaCore', '7.0.0'
+pod 'AppMetricaCrashes', '7.0.0'

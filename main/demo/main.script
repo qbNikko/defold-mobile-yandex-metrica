@@ -1,0 +1,89 @@
+local appmetrica = require("qb-appmetrica.appmetrica")
+local constants = require("main.constants")
+local localization = require("main.demo.localization")
+local LOG_PREFIX = "AppMetrica:"
+local LOG_INTERVAL_SECONDS = 1
+
+--- Состояние демонстрации во время запроса к AppMetrica.
+---@class AppMetricaDemoState
+---@field frames integer? # Число кадров после запуска демо или nil на неподдерживаемой платформе.
+---@field seconds_waiting number # Время с последнего сообщения об ожидании в секундах.
+---@field request_frame integer # Номер кадра постановки запроса в очередь.
+---@field waiting boolean? # Признак ожидания ответа SDK.
+
+--- Печатает результат приёма команды в тестовой игре без вывода идентификаторов.
+---@param ok boolean? # Признак приёма команды или nil при отказе.
+---@param err AppMetricaError? # Ошибка, которую нужно вывести в журнал.
+---@return boolean? # Исходный признак приёма команды.
+local function accepted(ok, err)
+    if err then
+        print(LOG_PREFIX, err.code, err.message)
+    end
+    return ok
+end
+
+--- Ставит тестовый отчёт и запрос идентификатора в очередь.
+---@param self AppMetricaDemoState # Состояние текущего экземпляра демо.
+local function queue_demo_requests(self)
+    accepted(appmetrica.report_event(constants.EVENT_APPMETRICA_DEMO, { source = "demo" }))
+    accepted(appmetrica.send_events_buffer())
+    self.request_frame = self.frames
+
+    --- Печатает результат запроса и число прошедших кадров без вывода самого идентификатора.
+    ---@param result AppMetricaStartupResult? # Полученные идентификаторы или nil при ошибке.
+    ---@param request_error AppMetricaError? # Ошибка запроса, если он завершился отказом.
+    local function on_startup(result, request_error)
+        self.waiting = false
+        print(LOG_PREFIX, localization.get("demo_request_frames"), self.frames - self.request_frame)
+        if result then
+            print(LOG_PREFIX, localization.get("demo_identifier_received"), result.device_id_hash ~= nil)
+        elseif request_error then
+            print(LOG_PREFIX, request_error.code, request_error.message)
+        end
+    end
+
+    self.waiting = accepted(appmetrica.request_startup_params({ "device_id_hash" }, on_startup))
+end
+
+--- Активирует SDK в поддерживаемой мобильной сборке.
+---@param self AppMetricaDemoState # Состояние экземпляра скрипта, переданное Defold.
+function init(self)
+    if not appmetrica.is_supported() then
+        print(LOG_PREFIX, localization.get("demo_unsupported"))
+        return
+    end
+    self.frames = 0
+    self.seconds_waiting = 0
+    self.request_frame = 0
+
+    --- Выводит ошибку активации, пока остальные команды обрабатываются очередью SDK.
+    ---@param _ boolean|nil # Признак завершения активации.
+    ---@param activation_error AppMetricaError? # Ошибка, которую вернул SDK.
+    local function on_activation_result(_, activation_error)
+        if activation_error then
+            print(LOG_PREFIX, activation_error.code, activation_error.message)
+        end
+    end
+
+    if accepted(appmetrica.activate({ location_tracking = false }, on_activation_result)) then
+        queue_demo_requests(self)
+    end
+end
+
+--- Подтверждает в журнале, что кадры продолжают обновляться во время ожидания.
+---@param self AppMetricaDemoState # Состояние экземпляра скрипта, переданное Defold.
+---@param dt number # Время после предыдущего обновления в секундах.
+function update(self, dt)
+    if not self.frames then
+        return
+    end
+    self.frames = self.frames + 1
+    if not self.waiting then
+        return
+    end
+    self.seconds_waiting = self.seconds_waiting + dt
+    if self.seconds_waiting >= LOG_INTERVAL_SECONDS then
+        self.seconds_waiting = self.seconds_waiting - LOG_INTERVAL_SECONDS
+        print(LOG_PREFIX, localization.get("demo_game_running"), self.frames)
+    end
+end

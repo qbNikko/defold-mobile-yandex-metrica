@@ -1,0 +1,7 @@
+/build/
+/.internal/
+/.idea/
+/agent/
+/local.game.project
+/bob.jar
+*.iml

@@ -1,0 +1,8 @@
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.appmetrica.analytics:analytics:8.6.0'
+}

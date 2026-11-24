@@ -1,0 +1,17 @@
+[project]
+title = qb-appmetrica
+custom_resources = /assets/locale/translations.csv
+
+[bootstrap]
+main_collection = /main/demo/main.collectionc
+
+[library]
+include_dirs = qb-appmetrica
+version = 0.1.3
+
+[android]
+r8_keep_rules = /builtins/manifests/android/dmengine.keep
+
+[appmetrica]
+android_api_key =
+ios_api_key =

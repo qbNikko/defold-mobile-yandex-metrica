@@ -1,0 +1,5 @@
+key,ru,en
+demo_unsupported,Требуется мобильная сборка с нативным расширением,A mobile build with the native extension is required
+demo_request_frames,Кадров после запроса,Frames since the request
+demo_identifier_received,Ответ получен. Наличие идентификатора,Response received. Identifier present
+demo_game_running,Игровой цикл работает,The game loop is running

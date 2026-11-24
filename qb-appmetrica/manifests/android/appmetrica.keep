@@ -1,0 +1,6 @@
+# Класс и сигнатуры используются нативным мостом Defold через JNI.
+-keep class com.defold.extension.qb.appmetrica.AppMetricaBridge {
+    public <init>(android.app.Activity);
+    public boolean submit(long, java.lang.String, byte[]);
+    private static native void complete(long, java.lang.String, byte[]);
+}
