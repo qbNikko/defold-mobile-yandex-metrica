@@ -73,3 +73,7 @@ end
 - [Справочник Lua API с примерами](docs/qb-appmetrica-api.md)
 - [Тесты и проверка на устройстве](docs/TESTING.md)
 - [Настройки приложения в AppMetrica](https://appmetrica.yandex.ru/docs/ru/settings/general)
+
+## Лицензия
+
+`qb-appmetrica` распространяется по [лицензии MIT](LICENSE). На сторонние зависимости распространяются их собственные лицензии.
