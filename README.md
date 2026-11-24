@@ -11,8 +11,17 @@
 
 ## Подключение к Defold
 
-- **Из ZIP.** Добавьте URL архива расширения в **Project → Dependencies** в `game.project`, затем выполните **Project → Fetch Libraries**. Используйте URL ZIP-архива с исходниками расширения.
+- **Из ZIP.** Скопируйте ссылку на [версию 1.0](https://github.com/qbNikko/defold-mobile-yandex-metrica/archive/refs/tags/1.0.zip) в **Project → Dependencies** в `game.project`, затем выполните **Project → Fetch Libraries**.
 - **Из исходников.** Скопируйте папку `qb-appmetrica` рядом с `game.project` вашей игры. Если расширение было подключено через ZIP, уберите его из списка зависимостей.
+
+Если редактируете `game.project` вручную, добавьте зависимость в секцию `[project]`:
+
+```ini
+[project]
+dependencies#0 = https://github.com/qbNikko/defold-mobile-yandex-metrica/archive/refs/tags/1.0.zip
+```
+
+Если в проекте уже есть зависимости, используйте следующий свободный номер вместо `#0`.
 
 В обоих случаях модуль подключается одинаково:
 
